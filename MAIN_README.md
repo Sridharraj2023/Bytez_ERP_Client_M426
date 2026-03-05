@@ -382,9 +382,9 @@ npm start
 - Backend API: http://localhost:5000
 
 **5. Login Credentials:**
-- Admin: admin@bytez.com / admin123
-- Manager: manager@bytez.com / manager123
-- Employee: employee@bytez.com / employee123
+- Admin: admin@bytez.com / password123
+- Manager: manager@bytez.com / password123
+- Employee: employee@bytez.com / password123
 
 ---
 

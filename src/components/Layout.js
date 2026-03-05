@@ -6,6 +6,7 @@ function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const [sidebarOpen, setSidebarOpen] = React.useState(true);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -14,43 +15,58 @@ function Layout() {
   };
 
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: '📊' },
-    { path: '/clients', label: 'Clients', icon: '👥' },
-    { path: '/projects', label: 'Projects', icon: '📁' },
-    { path: '/tasks', label: 'Tasks', icon: '✓' },
-    { path: '/ai-tools', label: 'AI Tools', icon: '🤖' }
+    { path: '/', label: 'Dashboard', icon: '📊', roles: ['Admin', 'Manager', 'Employee'] },
+    { path: '/clients', label: 'Clients', icon: '👥', roles: ['Admin'] },
+    { path: '/projects', label: 'Projects', icon: '📁', roles: ['Admin', 'Manager'] },
+    { path: '/tasks', label: 'Tasks', icon: '✓', roles: ['Admin', 'Manager', 'Employee'] },
+    { path: '/ai-tools', label: 'AI Tools', icon: '🤖', roles: ['Admin', 'Manager', 'Employee'] }
   ];
+
+  // Filter nav items based on user role
+  const filteredNavItems = navItems.filter(item => 
+    item.roles.includes(user.role)
+  );
 
   return (
     <Container fluid className="p-0">
       <Row className="g-0">
-        <Col md={2} className="sidebar">
-          <div className="p-3">
-            <h4 className="text-white mb-4">Digital Agency ERP</h4>
-            <Nav className="flex-column">
-              {navItems.map(item => (
-                <Nav.Link
-                  key={item.path}
-                  as={Link}
-                  to={item.path}
-                  className={location.pathname === item.path ? 'active' : ''}
-                >
-                  <span className="me-2">{item.icon}</span>
-                  {item.label}
-                </Nav.Link>
-              ))}
-            </Nav>
-            <div className="mt-auto pt-4">
-              <div className="text-white-50 small mb-2">{user.name}</div>
-              <div className="text-white-50 small mb-3">{user.role}</div>
-              <button className="btn btn-outline-light btn-sm w-100" onClick={handleLogout}>
-                Logout
-              </button>
+        {sidebarOpen && (
+          <Col md={2} className="sidebar">
+            <div className="p-3">
+              <h4 className="text-white mb-4">Digital Agency ERP</h4>
+              <Nav className="flex-column">
+                {filteredNavItems.map(item => (
+                  <Nav.Link
+                    key={item.path}
+                    as={Link}
+                    to={item.path}
+                    className={location.pathname === item.path ? 'active' : ''}
+                  >
+                    <span className="me-2">{item.icon}</span>
+                    {item.label}
+                  </Nav.Link>
+                ))}
+              </Nav>
+              <div className="mt-auto pt-4">
+                <div className="text-white-50 small mb-2">{user.name}</div>
+                <div className="text-white-50 small mb-3">{user.role}</div>
+                <button className="btn btn-outline-light btn-sm w-100" onClick={handleLogout}>
+                  Logout
+                </button>
+              </div>
             </div>
+          </Col>
+        )}
+        <Col md={sidebarOpen ? 10 : 12} className="main-content">
+          <div className="p-3">
+            <button 
+              className="btn btn-outline-secondary btn-sm mb-3" 
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              {sidebarOpen ? '☰ Hide Sidebar' : '☰ Show Sidebar'}
+            </button>
+            <Outlet />
           </div>
-        </Col>
-        <Col md={10} className="main-content">
-          <Outlet />
         </Col>
       </Row>
     </Container>

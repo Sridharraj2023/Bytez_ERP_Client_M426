@@ -6,6 +6,8 @@ function Clients() {
   const [clients, setClients] = useState([]);
   const [show, setShow] = useState(false);
   const [form, setForm] = useState({});
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const isAdmin = user.role === 'Admin';
 
   useEffect(() => {
     loadClients();
@@ -43,7 +45,9 @@ function Clients() {
     <>
       <div className="d-flex justify-content-between mb-4">
         <h2>Clients</h2>
-        <Button onClick={() => { setForm({}); setShow(true); }}>Add Client</Button>
+        {isAdmin && (
+          <Button onClick={() => { setForm({}); setShow(true); }}>Add Client</Button>
+        )}
       </div>
       <Table striped bordered hover>
         <thead>
@@ -73,20 +77,24 @@ function Clients() {
               </td>
               <td>
                 <div className="action-buttons">
-                  <Button 
-                    size="sm" 
-                    variant="outline-primary" 
-                    onClick={() => { setForm(c); setShow(true); }}
-                  >
-                    ✏️ Edit
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline-danger" 
-                    onClick={() => handleDelete(c.id)}
-                  >
-                    🗑️ Delete
-                  </Button>
+                  {isAdmin && (
+                    <>
+                      <Button 
+                        size="sm" 
+                        variant="outline-primary" 
+                        onClick={() => { setForm(c); setShow(true); }}
+                      >
+                        ✏️ Edit
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline-danger" 
+                        onClick={() => handleDelete(c.id)}
+                      >
+                        🗑️ Delete
+                      </Button>
+                    </>
+                  )}
                 </div>
               </td>
             </tr>
